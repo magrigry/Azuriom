@@ -18,7 +18,7 @@ const fs = require('fs');
 const vendorPath = 'public/assets/vendor';
 
 const vendorDependencies = [
-    'autosize', 'axios', 'bootstrap', 'chart.js', 'clipboard', 'easymde', 'jquery', '@simonwep/pickr:pickr',
+    'autosize', 'axios', 'bootstrap', 'chart.js', 'clipboard', 'easymde', 'jquery', '@simonwep/pickr:pickr', '@toast-ui/editor',
 ];
 
 for (const name of vendorDependencies) {
