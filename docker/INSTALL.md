@@ -6,13 +6,16 @@ Requirements:
 - bash shell (usually already installed)
 - [git](https://git-scm.com/)
 
+Note : All the following commands should be run as root
+
 # Dependencies installation example
 
 ``` 
 apt update 
-apt install -y curl git software-properties-common curl apt-transport-https ca-certificates gnupg 
+apt install -y curl git software-properties-common curl apt-transport-https ca-certificates gnupg tar
 curl -sSL https://get.docker.com/ | CHANNEL=stable bash 
-curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+curl -L "https://github.com/docker/compose/releases/download/latest/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
 ```
 
 and enable docker on boot 
@@ -22,9 +25,8 @@ and enable docker on boot
 
 ## Download Azuriom 
 ```
-mkdir -p /var/azuriom && cd /var/azuriom && git clone --depth 1 --branch v0.4.0 https://github.com/Azuriom/Azuriom.git .
+mkdir -p /var/azuriom && cd /var/azuriom && git clone --depth 1 https://github.com/Azuriom/Azuriom.git .
 ```
-where `v0.4.0` is the [latest release](https://github.com/Azuriom/Azuriom/releases/latest)
 
 
 Go into the downloaded folder
@@ -34,20 +36,38 @@ cd Azuriom
 
 # Set rights on files & folders
 `chmod -R 755 storage bootstrap/cache resources/themes plugins`
+`chmod +x azuriom.sh`
 
 # Change the owner to www-data
+`useradd www-data` (if an error tell your that this user already exists no worries, just skip it)
+
 `chown -R www-data *`
 
 ## Setup `.env`
 Copy the `.env.example` to `.env` and set the database information like this:
+
+### Use an external database that uou setup on your own
+
 ```
 DB_CONNECTION=mysql
-DB_HOST=database
+DB_HOST=[IP adresse of your database. If you use a local database, set the public IP of your server (localhost or 12.7.0.0.1 won't work)]
 DB_PORT=3306
-DB_DATABASE=[database name]
-DB_USERNAME=[database user]
-DB_PASSWORD=[database password]
+DB_DATABASE=[database_name]
+DB_USERNAME=[database_user]
+DB_PASSWORD=[database_password]
 ```
+
+### Or use a database provided with docker
+
+```
+DB_CONNECTION=pgsql
+DB_HOST=database
+DB_PORT=5432
+DB_DATABASE=azuriom
+DB_USERNAME=azuriom
+DB_PASSWORD=[Here_A_Random_String]
+```
+
 
 ## Build everything
 ```
@@ -97,3 +117,21 @@ If you want to always start your container on a specific port, just add `PORT=80
 * `./azuriom.sh build`
 * `./azuriom.sh laravel-clear-cache`
 * `./azuriom.sh laravel-migrate`
+
+# More commands
+```
+Commands:
+   build                      Build the whole application.
+   start                      Start containers (require the whole application to be built)
+   docker-compose-build       Build containers
+   npm-install                Install npm dependencies
+   npm-run-prod               Compile assets (require npm dependencies to be installed)
+   composer-install           Install composer dependencies
+   laravel-generate-key       Generate laravel APP_KEY in .env file (used by laravel for data encryption)
+   laravel-init-db            Initiate database
+   laravel-migrate            Run migration (mostly used when updating to insert database changes)
+   laravel-symlink            Create a symlink (create a symlink public/storage -> storage/app/public)
+   laravel-create-admin       Create an admin user through CLI
+   laravel-clear-cache        Clear laravel cache
+   artisan <commands>         Run any artisan command (e.g. ./azuriom artisan cache:clear)
+```
