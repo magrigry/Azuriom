@@ -45,6 +45,7 @@ Route::prefix('users')->name('users.')->middleware('auth')->group(function () {
     Route::get('/search', [UserController::class, 'search'])->name('search');
 });
 
+
 Route::prefix('profile')->name('profile.')->middleware('auth')->group(function () {
     Route::get('/', [ProfileController::class, 'index'])->name('index');
 
@@ -63,10 +64,13 @@ Route::prefix('profile')->name('profile.')->middleware('auth')->group(function (
     Route::post('/money/transfer', [ProfileController::class, 'transferMoney'])->name('transfer-money');
 });
 
+
+
 Route::prefix('notifications')->name('notifications.')->middleware('auth')->group(function () {
     Route::post('/{notification}/read', [NotificationController::class, 'markAsRead'])->name('read');
     Route::post('/read', [NotificationController::class, 'markAllAsRead'])->name('read.all');
 });
+
 
 Route::prefix('news')->name('posts.')->group(function () {
     Route::get('/', [PostController::class, 'index'])->name('index');

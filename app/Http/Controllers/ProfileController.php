@@ -14,9 +14,15 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use PragmaRX\Google2FA\Google2FA;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProfileController extends Controller
 {
+    public function __construct()
+    {
+        throw new NotFoundHttpException();
+    }
+
     /**
      * Show the user profile.
      *

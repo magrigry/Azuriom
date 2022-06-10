@@ -9,12 +9,15 @@
 
         <div class="card">
             <div class="card-body">
-                <form method="POST" action="{{ route('login') }}">
-                    @csrf
+                <form @if($username !== null) method="POST" @else method="GET" @endif action="{{ route('login') }}">
+
+                    @if($username !== null)
+                        @csrf
+                    @endif
 
                     <div class="mb-3">
                         <label class="form-label" for="email">{{ trans('auth.email') }}</label>
-                        <input id="email" type="text" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                        <input id="email" type="text" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ $username }}" required autocomplete="email" autofocus>
 
                         @error('email')
                             <span class="invalid-feedback" role="alert">
@@ -23,6 +26,7 @@
                         @enderror
                     </div>
 
+                    @if($username !== null)
                     <div class="mb-3">
                         <label class="form-label" for="password">{{ trans('auth.password') }}</label>
                         <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
@@ -33,6 +37,7 @@
                             </span>
                         @enderror
                     </div>
+                    @endif
 
                     <div class="row gy-3 mb-3">
                         <div class="col-md-6">
@@ -46,7 +51,7 @@
                         </div>
 
                         <div class="col-md-6">
-                            @if (Route::has('password.request'))
+                            @if (Route::has('password.request') && $username !== null)
                                 <a class="float-md-end" href="{{ route('password.request') }}">
                                     {{ trans('auth.forgot_password') }}
                                 </a>

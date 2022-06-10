@@ -4,10 +4,13 @@ namespace Azuriom\Http\Controllers\Auth;
 
 use Azuriom\Http\Controllers\Controller;
 use Azuriom\Models\ActionLog;
+use Azuriom\Models\Role;
 use Azuriom\Models\User;
 use Azuriom\Providers\RouteServiceProvider;
+use Azuriom\Support\FirstSkyAuth;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -48,6 +51,24 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
 
         $this->middleware('login.socialite')->only(['showLoginForm', 'login']);
+    }
+
+    public function showLoginForm(Request $request)
+    {
+        if(!session()->has('url.intended'))
+        {
+            session(['url.intended' => url()->previous()]);
+        }
+
+        $email = $request->get('email');
+
+        if ($email !== null && FirstSkyAuth::autoAuth($email)) {
+            return redirect()->intended();
+        }
+
+        return view('auth.login', [
+            'username' => $email
+        ]);
     }
 
     /**
